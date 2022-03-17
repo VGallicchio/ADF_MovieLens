@@ -1,1 +1,11 @@
 # ADF_MovieLens
+
+
+________________________________________________________________________________________________________________________________________________________________
+
+Neste repo vamos abordar a Arquitetura para um SQL Server baseado nos dados da MovieLens, desde sua normalização até a criação de procedures e views.  
+
+#Link MovieLens
+________________________________________________________________________________________________________________________________________________________________
+
+https://grouplens.org/datasets/movielens/
