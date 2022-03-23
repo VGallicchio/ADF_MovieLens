@@ -1,0 +1,41 @@
+{
+	"name": "Activity DataFlow Distinct Genres",
+	"properties": {
+		"activities": [
+			{
+				"name": "etl_distinct_genres_counts",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "df_transform_genres",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"SinkToGenresTable": {
+								"SchemaName": "dbo",
+								"TableName": "Genres"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"folder": {
+			"name": "transfer_data"
+		},
+		"annotations": []
+	}
+}

@@ -1,0 +1,83 @@
+{
+	"name": "df_transform_genres",
+	"properties": {
+		"folder": {
+			"name": "ECDC_FLow"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_movies",
+						"type": "DatasetReference"
+					},
+					"name": "Movies"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_generico_azuresql",
+						"type": "DatasetReference"
+					},
+					"name": "SinkToGenresTable"
+				}
+			],
+			"transformations": [
+				{
+					"name": "SplitGenres"
+				},
+				{
+					"name": "FlattGenres"
+				},
+				{
+					"name": "SelectGenres"
+				},
+				{
+					"name": "AggGenres"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          movieId as string,",
+				"          title as string,",
+				"          genres as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> Movies",
+				"Movies derive(genres_2 = split(genres, '|')) ~> SplitGenres",
+				"SplitGenres foldDown(unroll(genres_2),",
+				"     mapColumn(",
+				"          movieId,",
+				"          title,",
+				"          genres_2",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> FlattGenres",
+				"FlattGenres select(mapColumn(",
+				"          GENRES = genres_2",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectGenres",
+				"SelectGenres aggregate(groupBy(GENRES),",
+				"     COUNT = count(GENRES)) ~> AggGenres",
+				"AggGenres sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          GENRES,",
+				"          COUNT",
+				"     )) ~> SinkToGenresTable"
+			]
+		}
+	}
+}

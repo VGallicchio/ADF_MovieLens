@@ -1,0 +1,46 @@
+{
+	"name": "Activity DataFlow Transform Tags in Copys",
+	"properties": {
+		"activities": [
+			{
+				"name": "df_tagas_to_copy",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "df_transform_tagsincopy",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"SouceTag": {
+								"ContainerName": "movielens",
+								"FileName": "tags.csv",
+								"Delimiter": ","
+							},
+							"SinkToCopyTable": {
+								"SchemaName": "dbo",
+								"TableName": "Copy"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"folder": {
+			"name": "transfer_data"
+		},
+		"annotations": []
+	}
+}

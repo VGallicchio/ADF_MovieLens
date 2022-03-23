@@ -1,0 +1,45 @@
+{
+	"name": "Activity DataFlow Genres Movies Link",
+	"properties": {
+		"activities": [
+			{
+				"name": "df_genres_movies_link",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "df_movies_link_genres",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"GenresTable": {
+								"SchemaName": "dbo",
+								"TableName": "Genres"
+							},
+							"SinkToGenresLink": {
+								"SchemaName": "dbo",
+								"TableName": "Genres_Link"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"folder": {
+			"name": "transfer_data"
+		},
+		"annotations": []
+	}
+}

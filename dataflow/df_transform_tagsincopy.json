@@ -1,0 +1,69 @@
+{
+	"name": "df_transform_tagsincopy",
+	"properties": {
+		"folder": {
+			"name": "ECDC_FLow"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_generico_csv",
+						"type": "DatasetReference"
+					},
+					"name": "SouceTag"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_generico_azuresql",
+						"type": "DatasetReference"
+					},
+					"name": "SinkToCopyTable"
+				}
+			],
+			"transformations": [
+				{
+					"name": "SortMovieID"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          userId as short,",
+				"          movieId as integer,",
+				"          tag as string,",
+				"          timestamp as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> SouceTag",
+				"select1 sort(asc(MOVIE_ID, true)) ~> SortMovieID",
+				"SouceTag derive(CREATED_AT = toTimestamp(toInteger(toString(byName('timestamp')))*1000l,'YYYY-MM-DD hh:mm:ss')) ~> derivedColumn1",
+				"derivedColumn1 select(mapColumn(",
+				"          MOVIE_ID = movieId,",
+				"          CREATED_AT",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"SortMovieID sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> SinkToCopyTable"
+			]
+		}
+	}
+}
